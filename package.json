@@ -1,0 +1,6 @@
+{
+  "name": "module-system",
+  "version": "0.1.0",
+  "author": "bradleymeck",
+  "main": "lib/index.js"
+}
