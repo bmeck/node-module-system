@@ -3,5 +3,11 @@
   "version": "1.0.0",
   "author": "bradleymeck",
   "main": "lib/index.js",
-  "repository": "git@github.com:bmeck/node-module-system"
+  "repository": "git@github.com:bmeck/node-module-system",
+  "devDependencies": {
+    "jest": "23.6.0"
+  },
+  "scripts": {
+    "test": "jest"
+  }
 }
