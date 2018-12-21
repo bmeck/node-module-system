@@ -3,7 +3,16 @@ const { statSync, readFileSync } = require('fs');
 const builtinModules = new Set(require('module').builtinModules);
 const { createModuleSystem } = require('../lib/index.js');
 const JSON_parse = JSON.parse;
-const { join, normalize, extname, dirname, resolve } = require('path');
+const {
+  join,
+  normalize,
+  extname,
+  dirname,
+  resolve,
+  isAbsolute,
+  sep,
+} = require('path');
+const isRelativePattern = new RegExp(`^\\.?\\.?(?:${sep}|$)`);
 
 /**
  * Attempts to emulate Node.js loader
@@ -44,10 +53,13 @@ exports.createNodeModuleSystem = function createNodeModuleSystem() {
     if (builtinModules.has(modulePath)) {
       return modulePath;
     }
-    const isRelative = /^\.?\.?(\/|$)/.test(modulePath);
+    const isRelative = isRelativePattern.test(modulePath) || isAbsolute(modulePath);
     let resolvedPath;
     if (isRelative) {
-      resolvedPath = resolveFile(resolve(module ? dirname(module.filename) : process.cwd(), modulePath));
+      // entrypoint should never be bare due to CLI resolve
+      resolvedPath = resolveFile(
+        resolve(module ? dirname(module.filename) : process.cwd(), modulePath)
+      );
     } else {
       resolvedPath = resolveNodeModule(modulePath, dirname(module.filename));
     }
@@ -77,7 +89,7 @@ exports.createNodeModuleSystem = function createNodeModuleSystem() {
   function resolveFile(possibleFile) {
     let stat;
     // EXACT
-    const foundFile = resolveFileExtension(possibleFile);
+    let foundFile = resolveFileExtension(possibleFile);
     if (foundFile) {
       return foundFile;
     }
