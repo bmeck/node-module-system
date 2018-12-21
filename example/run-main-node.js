@@ -1,3 +1,4 @@
+'use strict';
 require('./node-module-system.js')
    .createNodeModuleSystem()
-   .runMain(process.argv[2])
+   .runMain(require('path').resolve(process.argv[2]));
